@@ -28,7 +28,7 @@ class toDoList():
     def addTask(self, taskName):
         self.tasks.append({"name": taskName, "done": False})
 
-    def markTaskDone(self, taskName):
+    def toggleTask(self, taskName):
         for task in self.tasks:
             if task["name"] == taskName:
                 task["done"] = not task["done"]
@@ -71,7 +71,7 @@ if __name__ == "__main__":
             case "1": userList.showTasks()
             case "2": 
                 taskName = input("Which task is complete? ")
-                userList.markTaskDone(taskName)
+                userList.toggleTask(taskName)
                 saved.save(userList.tasks)
             case "3": 
                 taskName = input("Remove which task? ")

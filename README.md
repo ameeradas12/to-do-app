@@ -1,40 +1,31 @@
 # To-Do App
 
-A simple command-line to-do list written in Python. Add tasks, mark them done,
-and delete them. Your list is saved automatically between runs.
+A simple to-do list app written in Python with both a desktop window and a terminal version.
+Add tasks, mark them done, and delete them. Your list is saved automatically between runs.
 
 ## Features
 
-- Add, view, complete, and delete tasks
-- Completed tasks are shown with a checkbox: `[x]` done, `[ ]` not done
-- Tasks are saved to `userList.json`, so they're still there next time
+- Add, view, toggle done, and delete tasks
+- Desktop GUI built with Tkinter
+- CLI version for the terminal
+- Tasks are saved to `userlist.json` 
 
 ## Requirements
 
-- Just Python 3.10 or newer!  
+- Get `To-Do App.exe` from the [Releases](../../releases) page. Windows may show a warning since the app isn't signed. Click More info -> Run anyway.
 
 
 ## How to run
 
+Requires Python 3.10 or higher.
+
+**GUI Version**
+```
+python todo_gui.py
+```
+
+**Terminal version:**
+
 ```
 python todo.py
 ```
-
-## Usage
-
-Choose an option by typing its number:
-
-```
-1. Show tasks
-2. Mark task done
-3. Delete task
-4. Add task
-5. Quit
-```
-
-When marking or deleting, type the task's name exactly as it appears.
-
-## Planned
-
-- A GUI window with buttons
-- A `.exe` for Windows

@@ -27,7 +27,7 @@ def markDone():
     if not task: return
     index = task[0]
     name = todo.tasks[index]["name"]
-    todo.markTaskDone(name)
+    todo.toggleTask(name)
     saved.save(todo.tasks)
     refresh()
 
