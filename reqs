@@ -1,0 +1,123 @@
+The plan
+Pick a GUI library.
+Separate the logic from the interface. Your toDoList class keeps the data; a new GUI part handles the window.
+Sketch the window, then build it.
+Connect buttons to your methods.
+Add saving, so tasks survive closing the app.
+Package it into an .exe with PyInstaller.
+1. Pick a GUI library
+
+You have two realistic options:
+
+Tkinter. It’s built into Python, so there’s nothing to install. It’s simple, and it makes a small .exe (around 10 MB). It looks a bit old-fashioned, though its ttk widgets help.
+PySide6. This is what the snipper used. It looks more modern and is more powerful, but the .exe is much bigger (often 100+ MB), and it’s more to learn.
+
+I’d recommend Tkinter for this project. A to-do list only needs a text box, a list, and a few buttons, and Tkinter makes those very easy. You can always rebuild it in PySide6 later as a second version.
+
+2. Separate logic from interface
+
+This is the most important design idea in this step. Right now your class mixes two jobs:
+
+Logic: storing tasks, adding, marking done, removing.
+Interface: print()ing menus and lists.
+
+In a GUI there’s no terminal, so print() and input() go nowhere. The usual approach:
+
+toDoList only manages data. Its methods change the list but never print or ask anything. printMenu disappears entirely, since buttons replace the menu. showTasks is replaced by the GUI drawing the list itself.
+A GUI class or functions build the window and call toDoList’s methods when buttons are clicked.
+
+It’s the same idea as keeping your model separate from your view in Java. Bonus: if you ever switch to PySide6, toDoList doesn’t change at all.
+
+One change GUIs make easier: instead of typing a task’s name to mark it done, the user clicks the task in the list, then clicks a button. A clicked list item gives you its position, not its name, so your mark-done and remove methods become simpler by-index versions, like the by-number one from earlier.
+
+3. Sketch the window
+
+Draw it on paper first. A simple layout:
+
+┌───────────────────────────────┐
+│ My To-Do List                 │
+│ [ type a task...     ] [Add]  │   ← text box + button
+│ ┌───────────────────────────┐ │
+│ │ [ ] Buy milk              │ │   ← list of tasks
+│ │ [x] Finish homework       │ │     (click to select)
+│ └───────────────────────────┘ │
+│ [Mark done]  [Delete]         │   ← action buttons
+└───────────────────────────────┘
+
+Then name the widgets (GUI parts) you need. In Tkinter:
+
+Entry: a one-line text box.
+Button: a clickable button.
+Listbox: a list of text lines the user can click to select.
+Frame: an invisible container for grouping widgets, like the row with the text box and Add button.
+4. How Tkinter works
+
+It’s the same event-driven idea as Qt. You create widgets, place them, tell buttons which function to call, then start the event loop. Here’s a tiny example that isn’t your to-do list:
+
+python
+import tkinter as tk
+
+def say_hello():
+    name = name_box.get()                 # read the text box
+    result.config(text=f"Hello {name}!")  # change the label's text
+
+window = tk.Tk()                          # the main window
+window.title("Greeter")
+
+name_box = tk.Entry(window)               # a text box inside the window
+name_box.pack()                           # place it (stacks top to bottom)
+
+button = tk.Button(window, text="Greet", command=say_hello)
+button.pack()
+
+result = tk.Label(window, text="")        # a line of text
+result.pack()
+
+window.mainloop()                         # start the event loop
+
+Some things to notice:
+
+command=say_hello has no parentheses. You’re handing the button the function to call later, exactly like connect(start_snip) in the snipper.
+.pack() places widgets stacked top to bottom. For side-by-side layouts, look up pack(side="left") or the grid() system.
+window.mainloop() is Tkinter’s app.exec(): it blocks and handles events until the window closes.
+Listbox methods you’ll need: .insert(...) adds a line, .delete(0, tk.END) clears all lines, and .curselection() tells you which line is selected (look up exactly what it returns).
+5. Keeping the list on screen up to date
+
+The Listbox doesn’t know about your tasks list; it’s just text lines. So write one “refresh” function that clears the Listbox and refills it from your tasks, with [x] or [ ] in front of each name. Then every button does the same three steps:
+
+Read the input (text box contents, or the selected line).
+Call the matching toDoList method.
+Call refresh.
+
+That pattern is most of your GUI.
+
+6. Saving
+
+Do this in the toDoList class, using json from the cheat sheet:
+
+A save method writes self.tasks to a file like tasks.json. Call it after every add, mark-done, and remove.
+In __init__, load the file if it exists (os.path.exists); otherwise start with an empty list. This is also where tasks = [] should move, as discussed.
+7. Making the .exe
+
+Use PyInstaller, which bundles Python and your code into one Windows program:
+
+powershell
+python -m pip install pyinstaller
+pyinstaller --onefile --windowed todo.py
+--onefile produces a single .exe instead of a folder of files.
+--windowed stops a black terminal window from opening behind your GUI. Only use it once the GUI works, since it also hides error messages.
+The result appears in a new dist folder. That .exe runs on other Windows PCs, even ones without Python.
+
+Things to know about PyInstaller:
+
+Windows Defender or SmartScreen may warn about it. Unsigned homemade .exe files often trigger this. It’s normal; click “More info” → “Run anyway”.
+Add build/ and dist/ to your .gitignore. They’re generated files, like compiled .class output.
+Where tasks.json goes: a plain filename saves into whatever folder the program was started from. When you double-click the .exe, that’s usually the .exe’s own folder, which is fine for now.
+Suggested order
+Commit your current working version.
+Add saving to the terminal version and test it. It’s easier to debug with print() still available.
+Change mark-done and remove to work by index.
+Build the window with no functionality: just the widgets, laid out like your sketch.
+Wire up Add and refresh first, then Mark done and Delete.
+Test with python todo_gui.py, then package with PyInstaller.
+Commit along the way.
