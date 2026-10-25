@@ -31,7 +31,7 @@ class toDoList():
     def markTaskDone(self, taskName):
         for task in self.tasks:
             if task["name"] == taskName:
-                task["done"] = True
+                task["done"] = not task["done"]
                 break
         else:
             print("No task with that name.")
