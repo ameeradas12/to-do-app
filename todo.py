@@ -59,34 +59,34 @@ class saver():
 
             
     
+if __name__ == "__main__":
+    running = True
+    userList = toDoList()
+    saved = saver()
+    while running:
+        userList.printMenu()
+        choice = input("Select an option. ").strip()
 
-running = True
-userList = toDoList()
-saved = saver()
-while running:
-    userList.printMenu()
-    choice = input("Select an option. ").strip()
+        match choice:
+            case "1": userList.showTasks()
+            case "2": 
+                taskName = input("Which task is complete? ")
+                userList.markTaskDone(taskName)
+                saved.save(userList.tasks)
+            case "3": 
+                taskName = input("Remove which task? ")
+                userList.removeTask(taskName)
+                saved.save(userList.tasks)
+            case "4": 
+                taskName = input("Add which task? ")
+                userList.addTask(taskName)
+                saved.save(userList.tasks)
+            case "5": 
+                running = False
+                saved.save(userList.tasks)
 
-    match choice:
-        case "1": userList.showTasks()
-        case "2": 
-            taskName = input("Which task is complete? ")
-            userList.markTaskDone(taskName)
-            saved.save(userList.tasks)
-        case "3": 
-            taskName = input("Remove which task? ")
-            userList.removeTask(taskName)
-            saved.save(userList.tasks)
-        case "4": 
-            taskName = input("Add which task? ")
-            userList.addTask(taskName)
-            saved.save(userList.tasks)
-        case "5": 
-            running = False
-            saved.save(userList.tasks)
-
-        
-    print()
+            
+        print()
 
    
 
